@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,8 @@ import java.util.Map;
 public class FilmController {
     private final Map<Long, Film> films = new HashMap<>();
     private Long idCounter = 1L;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.parse("28.12.1895", formatter);
 
     @GetMapping
     public Collection<Film> getAllFilms() {
@@ -25,6 +28,10 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+            log.warn("Дата релиза должна быть не раньше 28 декабря 1895 года");
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
+        }
         film.setId(idCounter++);
         films.put(film.getId(), film);
         log.info("Добавлен новый фильм - {}", film);
@@ -37,11 +44,14 @@ public class FilmController {
             log.warn("Фильм с id {} не найден", film.getId());
             throw new ValidationException("Фильма с таким id не существует");
         }
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+            log.warn("Дата релиза должна быть не раньше 28 декабря 1895 года");
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
+        }
         films.put(film.getId(), film);
         log.info("Фильм {} обновлен", film);
         return film;
     }
-
 }
 
 
