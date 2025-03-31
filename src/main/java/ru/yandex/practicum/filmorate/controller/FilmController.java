@@ -28,10 +28,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            log.warn("Дата релиза должна быть не раньше 28 декабря 1895 года");
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
-        }
+        validateReleaseDate(film.getReleaseDate());
         film.setId(idCounter++);
         films.put(film.getId(), film);
         log.info("Добавлен новый фильм - {}", film);
@@ -44,13 +41,17 @@ public class FilmController {
             log.warn("Фильм с id {} не найден", film.getId());
             throw new ValidationException("Фильма с таким id не существует");
         }
-        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            log.warn("Дата релиза должна быть не раньше 28 декабря 1895 года");
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
-        }
+        validateReleaseDate(film.getReleaseDate());
         films.put(film.getId(), film);
         log.info("Фильм {} обновлен", film);
         return film;
+    }
+
+    private void validateReleaseDate(LocalDate releaseDate) {
+        if (releaseDate.isBefore(MIN_RELEASE_DATE)) {
+            log.warn("Дата релиза должна быть не раньше 28 декабря 1895 года");
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
+        }
     }
 }
 
