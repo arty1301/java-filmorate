@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 @Data
 public class Film {
     private Long id;
+    private Set<Long> likes = new HashSet<>();
 
     @NotBlank(message = "Название не должно быть пустым")
     private String name;
