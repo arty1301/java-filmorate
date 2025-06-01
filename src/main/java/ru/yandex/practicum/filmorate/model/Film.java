@@ -10,10 +10,14 @@ import java.util.Set;
 /**
  * Film.
  */
+
+
 @Data
 public class Film {
     private Long id;
     private Set<Long> likes = new HashSet<>();
+    private Set<Genre> genres = new HashSet<>();
+    private Mpa mpa;
 
     @NotBlank(message = "Название не должно быть пустым")
     private String name;
